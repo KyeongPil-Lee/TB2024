@@ -97,10 +97,9 @@ int main(int argc, char *argv[])
   plotter.SetCase("single");
   plotter.SetMethod("IntADC");
   plotter.SetCID(aCID);
-
   plotter.init();
-
-  TBread<TBwaveform> readerWave = TBread<TBwaveform>(fRunNum, fMaxEvent, fMaxFile, fIsLive, "/Users/khwang/scratch/TB2024/dev_240715/TB2024/sample_data", vecMIDs);
+  //TBread<TBwaveform> readerWave = TBread<TBwaveform>(fRunNum, fMaxEvent, fMaxFile, fIsLive, "/Users/khwang/scratch/TB2024/dev_240715/TB2024/sample_data", vecMIDs);
+  TBread<TBwaveform> readerWave = TBread<TBwaveform>(fRunNum, fMaxEvent, fMaxFile, fIsLive, "../sample_data", vecMIDs);
 
   while(1) {
     std::cout << readerWave.GetMaxEvent() << std::endl;
@@ -112,14 +111,17 @@ int main(int argc, char *argv[])
     int iMaxEvent = readerWave.GetLiveMaxEvent();
     // std::cout << iCurrentEvent << " " << iLiveCurrentEvent << " " << iMaxEvent << std::endl;
 
-    std::chrono::time_point time_begin = std::chrono::system_clock::now();
+    //std::chrono::time_point time_begin = std::chrono::system_clock::now();
+    std::chrono::system_clock::time_point time_begin = std::chrono::system_clock::now();
 
     for (int i = iCurrentEvent; i < iMaxEvent; i++) {
       if (i > iCurrentEvent && i % 10 == 0) {
 
-        std::chrono::duration time_taken = std::chrono::system_clock::now() - time_begin; // delete
+        //std::chrono::duration time_taken = std::chrono::system_clock::now() - time_begin; // delete
+        std::chrono::seconds time_taken{std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now() - time_begin)}; // delete
         float percent_done = 1. * (float)(i - iCurrentEvent) / (float)(iMaxEvent - iCurrentEvent);
-        std::chrono::duration time_left = time_taken * (1 / percent_done - 1);
+        //std::chrono::duration time_left = time_taken * (1 / percent_done - 1);
+        std::chrono::duration<float, std::ratio<1>> time_left = time_taken * (1 / percent_done - 1);
         std::chrono::minutes minutes_left = std::chrono::duration_cast<std::chrono::minutes>(time_left);
         std::chrono::seconds seconds_left = std::chrono::duration_cast<std::chrono::seconds>(time_left - minutes_left);
         std::cout << "\r\033[F" //+ ANSI.HIGHLIGHTED_GREEN + ANSI.BLACK

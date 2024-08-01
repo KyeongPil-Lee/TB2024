@@ -63,15 +63,21 @@ int main(int argc, char *argv[])
   if (fMaxEvent > readerWave.GetMaxEvent())
     fMaxEvent = readerWave.GetMaxEvent();
 
-  std::chrono::time_point time_begin = std::chrono::system_clock::now();
+  //std::chrono::time_point time_begin = std::chrono::system_clock::now();
+  std::chrono::system_clock::time_point time_begin = std::chrono::system_clock::now();
   for (int i = 0; i < fMaxEvent; i++) {
     if (i > 0 && i % 10 == 0) {
 
-      std::chrono::duration time_taken = std::chrono::system_clock::now() - time_begin; // delete
+      std::chrono::seconds time_taken{std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now() - time_begin)}; // delete
       float percent_done = 1. * (float)i / (float)fMaxEvent;
-      std::chrono::duration time_left = time_taken * (1 / percent_done - 1);
+      std::chrono::duration<float, std::ratio<1>> time_left = time_taken * (1 / percent_done - 1);
       std::chrono::minutes minutes_left = std::chrono::duration_cast<std::chrono::minutes>(time_left);
       std::chrono::seconds seconds_left = std::chrono::duration_cast<std::chrono::seconds>(time_left - minutes_left);
+     // std::chrono::duration time_taken = std::chrono::system_clock::now() - time_begin; // delete
+     // float percent_done = 1. * (float)i / (float)fMaxEvent;
+     // std::chrono::duration time_left = time_taken * (1 / percent_done - 1);
+     // std::chrono::minutes minutes_left = std::chrono::duration_cast<std::chrono::minutes>(time_left);
+     // std::chrono::seconds seconds_left = std::chrono::duration_cast<std::chrono::seconds>(time_left - minutes_left);
       std::cout << "\r\033[F" + ANSI.BOLD
                 << " " << i << " / " << fMaxEvent << " events  " << minutes_left.count() << ":";
       printf("%02d left (%.1f %%) | ", int(seconds_left.count()), percent_done * 100);
